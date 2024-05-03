@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Metadata, title, stylesheets and scripts -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music DB</title>
+    <!-- Bootstrap CSS and JS used in interactivity and styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+  </head>
+
+  <body>
+    
+    <div class="container">
+        <h1>Music DB</h1>
+        <div class="mb-3">
+            <label for="search" class="form-label">Album search</label>
+            <input type="text" class="form-control" id="search" />
+            <button type="button" class="btn btn-secondary mt-2" onclick="searchAlbum()">
+            Search
+        </button>
+        </div>
+
+    <div id="search-results-container">
+        <div id="search-results">
+
+        </div>
+    </div>
+
+    <h2>Add Album/Update Album</h2>
+    <form id="album-form">
+        <input type="hidden" id="album-id" />
+
+        <div class="mb-3">
+            <label 
+            for="title" 
+            class="form-label"
+            >
+            Title
+            </label>
+            <input type="text" class="form-control" id="title" required />
+        </div>
+
+        <div class="mb-3">
+            <label 
+            for="artist" 
+            class="form-label"
+            >
+            
+            Artist
+
+            </label>
+            <input type="text" class="form-control" id="artist" required />
+        </div>
+
+        <div class="mb-3">
+            <label 
+            for="year" 
+            class="form-label"
+            >
+
+                Year
+
+            </label>
+            <input type="number" class="form-control" id="year" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Save
+        </button>
+
+    </form>
+
+    <h2>Saved Albums</h2>
+
+    <div id="album-search-list"></div>
+    </div>
+
+ <!-- jQuery, Popper, Bootstrap, and Axios libraries -->
+ <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!--Embedded JavaScript code for the main app-->
+<script>
+    // API URL for backend defined here
+    const API_URL = "http://localhost:3000/api/";
+    /////////////////////////////////////////////
+    
+    // Async function: searching an album using the backend API
+    
+    async function searchAlbum() {
+        const query = document.getElementById("search").value;
+        const response = await axios.get(API_URL + "lastfmsearch/" + query);
+        const results = response.data.results.albummatches.album;
+        displaySearchResults(results);
+    }
+
+    // Async function: fetching all saved albums from backend API
+    
+    async function fetchAlbums() {
+        const response = await fetch(API_URL + "getall");
+        const albums = await response.json();
+        displayAlbums(albums);
+    }
+
+    // Function: displaying search results in HTML
+
+    function displaySearchResults(results) {
+        const searchResults = document.getElementById("search-results");
+        searchResults.innerHTML = "";
+
+        for (const result of results) {
+            const div = document.createElement("div");
+            div.classList.add("card", "mb-3");
+            div.style.width = "18rem";
+
+            const img = document.createElement("img");
+            img.src = result.image[1]["#text"];
+            img.alt = result.name;
+            img.classList.add("card-img-top");
+
+            const cardBody = document.createElement("div");
+            cardBody.classList.add("card-body");
+
+            const title = document.createElement("h5");
+            title.classList.add("card-title");
+            title.textContent = result.name;
+
+            const artist = document.createElement("p");
+            artist.classList.add("card-text");
+            artist.textContent = result.artist;
+
+            const saveButton = document.createElement("button");
+            saveButton.classList.add("btn", "btn-primary");
+            saveButton.textContent = "Save";
+            saveButton.addEventListener("click", () => saveAlbum(result));
+
+
+
+            cardBody.appendChild(title);
+            cardBody.appendChild(artist);
+            cardBody.appendChild(saveButton);
+
+
+            div.appendChild(img);
+            div.appendChild(cardBody);
+
+            searchResults.appendChild(div);
+            
+        }
+    }
+///////////////////////////////////////////////////////////////////////////////////////////
+// Function to save an album to the personal music library
+async function saveAlbum(album) {
+    try {
+        // Ensure that the album object contains the title field
+        const title = album.name; // Assuming name is the field containing the album title
+        const artist = album.artist;
+        const year = album["release date"]; // Assuming "release date" is the field containing the release year
+        
+        // Construct the album data object
+        const albumData = { title, artist, year };
+
+        // Send a POST request to your backend API to save the album
+        const response = await axios.post(API_URL + "add", albumData);
+        console.log("Album saved:", response.data);
+
+        // Fetch all saved albums after saving the new album
+        fetchAlbums();
+    } catch (error) {
+        console.error("Error saving album:", error);
+    }
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+    // Async function: adds / updates an album in backend API
+
+    async function addOrUpdateAlbum(event) {
+        event.preventDefault();
+        const id = document.getElementById("album-id").value;
+        const title = document.getElementById("title").value;
+        const artist = document.getElementById("artist").value;
+        const year = document.getElementById("year").value;
+
+        const albumData = { title, artist, year };
+        
+        if (id) {
+            await fetch(API_URL + "update/" + id, {
+                method: "PUT",
+                headers: { "Content-Type" : "application/json" },
+                body: JSON.stringify(albumData),
+            });
+        } else {
+            await fetch(API_URL + "add", {
+                method: "POST",
+                headers: { "Content-Type" : "application/json" },
+                body: JSON.stringify(albumData),
+            });
+        }
+
+        document.getElementById("album-form").reset();
+        document.getElementById("album-id").value = "";
+        fetchAlbums();
+    }
+
+    // Async function: deletes an album using backend API
+
+    async function deleteAlbum(id) {
+        await fetch(API_URL + "delete/" + id, { method:"DELETE" });
+        fetchAlbums();
+    }
+    ///////////////////////////////////////////////////////////////
+
+    // Async function: edits an album, filling the form with album data
+
+    async function editAlbum(id) {
+        const response = await fetch(API_URL + id);
+        const album = await response.json();
+
+        document.getElementById("album-id").value = album._id;
+        document.getElementById("title").value = album.title;
+        document.getElementById("artist").value = album.artist;
+        document.getElementById("year").value = album.year;
+    }
+    ///////////////////////////////////////////////////////////////
+
+    // Function: displays all saved albums in HTML
+
+    function displayAlbums(albums) {
+        const albumList = document.getElementById("album-search-list");
+        albumList.innerHTML = "";
+
+        for (const album of albums) {
+            const div = document.createElement("div");
+            div.innerHTML = `
+            <h3>${album.title}</h3>
+            <p>${album.artist} (${album.year})</p>
+            <button class="btn btn-warning btn-sm" onclick="editAlbum('${album._id}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteAlbum('${album._id}')">Delete</button>
+          `;
+
+          albumList.appendChild(div);
+        }
+    }
+    ///////////////////////////////////////////////////////////////
+
+    document
+        .getElementById("album-form")
+        // addEventListener: for album form to handle submissions
+        .addEventListener("submit", addOrUpdateAlbum);
+        // Display search results and fetch all saved albums
+        displaySearchResults([]);
+        fetchAlbums();
+
+</script>
+
+<footer style=
+"position: relative; 
+ bottom: 0;
+ width: 100%; 
+ background-color: #f8f9fa; 
+ padding: 1rem 0;">
+    <div class="container">
+        <p class="text-center">&#169; Aleksi Mäyry 2024</p>
+    </div>
+
+</footer>
+
+  </body>
+  
+</html>

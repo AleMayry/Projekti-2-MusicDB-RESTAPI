@@ -1,0 +1,65 @@
+body {
+    background-color: #e2e2e2;
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+  }
+  
+  .container {
+    max-width: 960px;
+    margin-top: 2rem;
+  }
+  
+  h1 {
+    font-weight: bold;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  h2 {
+    font-size: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  #search-results-container {
+    margin-top: 2rem;
+  }
+
+
+  #album-search-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    
+  }
+
+  #album-search-list div {
+    width: 100%;
+    margin: 1rem;
+  }
+  
+  .form-label {
+    font-weight: bolder;
+    font-size: 1.2rem;
+  }  
+  .card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+  }
+  
+  .album-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  footer {
+    margin-top: 10rem;
+    font-size: 1rem;
+    font-weight: bold;
+  }
