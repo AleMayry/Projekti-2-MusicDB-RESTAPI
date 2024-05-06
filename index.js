@@ -118,7 +118,7 @@ app.delete("/api/delete/:id", async (req, res) => {
 // Uses LastFM API to search for albums
 app.get("/api/lastfmsearch/:query", async (req, res) => {
     try {
-      const response = await axios.get("http://ws.audioscrobbler.com/2.0/", {
+      const response = await axios.get("https://ws.audioscrobbler.com/2.0/", {
         params: {
           method: "album.search",
           album: req.params.query,
