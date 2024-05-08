@@ -23,6 +23,7 @@ body {
   
   #search-results-container {
     margin-top: 2rem;
+    display: flex;
   }
 
 
