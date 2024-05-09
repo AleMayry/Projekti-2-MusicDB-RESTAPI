@@ -10,11 +10,6 @@ const cors = require("cors");
 const path = require("path");
 const axios = require("axios");
 
-//import { error } from 'console';
-//import * as dotenv from 'dotenv';
-//import { title } from 'process';
-//dotenv.config();
-
 ////////////////////////////////////////////
 
 // Initializing Express application & using CORS and bodyParser middleware(s)
@@ -136,4 +131,4 @@ app.get("/api/lastfmsearch/:query", async (req, res) => {
 
 // Starting the server on a port specified in .env file
 const SERVER_PORT = process.env.SERVER_PORT || 3000;
-app.listen(SERVER_PORT, () => console.log(`Server running on port ${SERVER_PORT}, https://localhost:3000`));
+app.listen(SERVER_PORT, () => console.log(`Server running on port ${SERVER_PORT}, http://localhost:3000 or https://projekti-2-musicdb-restapi.onrender.com/api/`));
