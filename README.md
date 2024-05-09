@@ -46,3 +46,6 @@ https://github.com/AleMayry/Projekti-2-MusicDB-RESTAPI
 
 ## Linkki projektin videoesitykseen
 
+https://video.laurea.fi/media/t/0_b3prkopx
+
+
